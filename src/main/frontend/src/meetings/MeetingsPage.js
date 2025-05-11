@@ -26,15 +26,20 @@ export default function MeetingsPage({username}) {
 
         });
         if (response.ok) {
+            // const meetings = await response.json();
             const nextMeetings = [...meetings, meeting];
             setMeetings(nextMeetings);
             setAddingNewMeeting(false);
         }
     }
 
-    function handleDeleteMeeting(meeting) {
-        const nextMeetings = meetings.filter(m => m !== meeting);
-        setMeetings(nextMeetings);
+    async function handleDeleteMeeting(meeting) {
+        const response = await fetch(`/api/meetings/${meeting.id}`,{
+            method: 'DELETE'
+        });
+        if (response.ok){
+            const nextMeetings = meetings.filter(m => m !== meeting);
+            setMeetings(nextMeetings);}
     }
 
     return (
@@ -48,6 +53,8 @@ export default function MeetingsPage({username}) {
             {meetings.length > 0 &&
                 <MeetingsList meetings={meetings} username={username}
                               onDelete={handleDeleteMeeting}/>}
+
+
         </div>
     )
 }
