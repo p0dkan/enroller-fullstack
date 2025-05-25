@@ -112,4 +112,6 @@ public class MeetingRestController {
         Collection<Participant> participants = currentMeeting.getParticipants();
         return new ResponseEntity<>(participants, HttpStatus.NO_CONTENT);
     }
+
+
 }

@@ -5,6 +5,7 @@ export default function MeetingsList({meetings,onDelete, onSignIn,onSignout}) {
             <tr>
                 <th>Nazwa spotkania</th>
                 <th>Opis</th>
+                <th>Uczestnicy</th>
                 <th>Usuń spotkanie</th>
                 <th>Zapisz się</th>
                 <th>Wypisz się</th>
@@ -15,6 +16,7 @@ export default function MeetingsList({meetings,onDelete, onSignIn,onSignout}) {
                 meetings.map((meeting, index) => <tr key={index}>
                     <td>{meeting.title}</td>
                     <td>{meeting.description}</td>
+                    <td>{meeting.participants.map(participant => participant.login)}</td>
                     <td>
                         <button type="button"
                                 onClick={() => onDelete(meeting)}>Usuń</button>
