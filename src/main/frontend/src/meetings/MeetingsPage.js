@@ -26,8 +26,8 @@ export default function MeetingsPage({username}) {
 
         });
         if (response.ok) {
-            // const meetings = await response.json();
-            const nextMeetings = [...meetings, meeting];
+            const meetingsNew = await response.json();
+            const nextMeetings = [...meetings, meetingsNew];
             setMeetings(nextMeetings);
             setAddingNewMeeting(false);
         }
@@ -35,12 +35,35 @@ export default function MeetingsPage({username}) {
 
     async function handleDeleteMeeting(meeting) {
         const response = await fetch(`/api/meetings/${meeting.id}`,{
-            method: 'DELETE'
+            method: 'DELETE',
+            body: JSON.stringify(meeting),
+            headers: { 'Content-Type': 'application/json' }
         });
         if (response.ok){
             const nextMeetings = meetings.filter(m => m !== meeting);
             setMeetings(nextMeetings);}
     }
+
+    async function signInToMeeting(meeting){
+        const response = await fetch(`api/meetings/${meeting.id}/participants`, {
+            method: 'POST',
+            body: JSON.stringify({login: username}),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        if (response.ok) {
+        }
+    }
+
+    async function signOutMeeting(meeting){
+        const response = await fetch(`api/meetings/${meeting.id}/participants/${username}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        if (response.ok) {
+
+        }
+    }
+
 
     return (
         <div>
@@ -52,7 +75,7 @@ export default function MeetingsPage({username}) {
             }
             {meetings.length > 0 &&
                 <MeetingsList meetings={meetings} username={username}
-                              onDelete={handleDeleteMeeting}/>}
+                              onDelete={handleDeleteMeeting} onSignIn = {signInToMeeting} onSignout = {signOutMeeting}/>}
 
 
         </div>

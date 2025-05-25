@@ -76,4 +76,40 @@ public class MeetingRestController {
         meetingService.update(meeting);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/{id}/participants", method = RequestMethod.POST)
+    public ResponseEntity<?> addParticipant(@PathVariable("id") long id, @RequestBody Participant participantLogin) {
+        Meeting currentMeeting = meetingService.findById(id);
+        Participant participant = participantService.findByLogin(participantLogin.getLogin());
+        if (currentMeeting == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        if (participant == null) {
+            Participant participant1 = new Participant();
+            participant1.setLogin(participantLogin.getLogin());
+            participant1.setPassword("1234");
+            participant = participant1;
+        }
+        participantService.add(participant);
+//        System.out.println(participantService);
+        currentMeeting.addParticipant(participant);
+        meetingService.update(currentMeeting);
+        return new ResponseEntity<Meeting>(currentMeeting, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/{id}/participants/{login}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteParticipant(@PathVariable("id") long id, @PathVariable("login") String login) {
+        Meeting currentMeeting = meetingService.findById(id);
+        Participant participantToDelete = participantService.findByLogin(login);
+        if (currentMeeting == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        if (participantToDelete == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        currentMeeting.removeParticipant(participantToDelete);
+        meetingService.update(currentMeeting);
+        Collection<Participant> participants = currentMeeting.getParticipants();
+        return new ResponseEntity<>(participants, HttpStatus.NO_CONTENT);
+    }
 }
