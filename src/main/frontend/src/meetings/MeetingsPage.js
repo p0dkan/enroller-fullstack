@@ -6,15 +6,15 @@ export default function MeetingsPage({username}) {
     const [meetings, setMeetings] = useState([]);
     const [addingNewMeeting, setAddingNewMeeting] = useState(false);
 
-    useEffect(() => {
+    const fetchMeetings = async () => {
+        const response = await fetch(`/api/meetings`);
+        if (response.ok) {
+            const meetings = await response.json();
+            setMeetings(meetings);
+        }
+    };
 
-        const fetchMeetings = async () => {
-            const response = await fetch(`/api/meetings`);
-            if (response.ok) {
-                const meetings = await response.json();
-                setMeetings(meetings);
-            }
-        };
+    useEffect(() => {
         fetchMeetings();
     }, []);
 
@@ -41,8 +41,16 @@ export default function MeetingsPage({username}) {
         });
         if (response.ok){
             const nextMeetings = meetings.filter(m => m !== meeting);
-            setMeetings(nextMeetings);}
+            setMeetings(nextMeetings);
+        } else if (response.status === 409) {
+            const errorMessage = await response.text();
+            alert(errorMessage);
+        } else {
+            alert("Wystąpił błąd podczas usuwania spotkania.");
+        }
     }
+
+
 
     async function signInToMeeting(meeting){
         const response = await fetch(`api/meetings/${meeting.id}/participants`, {
@@ -51,6 +59,7 @@ export default function MeetingsPage({username}) {
             headers: { 'Content-Type': 'application/json' }
         });
         if (response.ok) {
+            fetchMeetings();
         }
     }
 
@@ -60,7 +69,7 @@ export default function MeetingsPage({username}) {
             headers: { 'Content-Type': 'application/json' }
         });
         if (response.ok) {
-
+            fetchMeetings();
         }
     }
 

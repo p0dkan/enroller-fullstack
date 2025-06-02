@@ -50,10 +50,13 @@ public class MeetingRestController {
     public ResponseEntity<?> deleteMeeting(@PathVariable("id") long id) {
         Meeting meeting = meetingService.findById(id);
         if (meeting == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (!meeting.getParticipants().isEmpty()) {
+            return new ResponseEntity<>("Nie można usunąć spotkania, ponieważ są na nie zapisani uczestnicy.", HttpStatus.CONFLICT);
         }
         meetingService.delete(meeting);
-        return new ResponseEntity<Meeting>(meeting, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
