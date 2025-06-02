@@ -1,4 +1,4 @@
-export default function MeetingsList({meetings,onDelete, onSignIn,onSignout}) {
+export default function MeetingsList({meetings,onDelete, onSignIn,onSignout, setEditing}) {
     return (
         <table>
             <thead>
@@ -10,13 +10,14 @@ export default function MeetingsList({meetings,onDelete, onSignIn,onSignout}) {
                 <th>Usuń spotkanie</th>
                 <th>Zapisz się</th>
                 <th>Wypisz się</th>
+                <th>Edytuj</th>
             </tr>
             </thead>
             <tbody>
             {
                 meetings.map((meeting, index) => {
                     const dateObj = new Date(meeting.date);
-                    const formattedDate = dateObj.toLocaleString(); // np. "2.06.2025, 14:30:00"
+                    const formattedDate = dateObj.toLocaleString();
                     return (
                     <tr key={index}>
                     <td>{meeting.title}</td>
@@ -28,18 +29,19 @@ export default function MeetingsList({meetings,onDelete, onSignIn,onSignout}) {
                           ))}
                         </td>
                     <td>
-                        <button type="button"
-                                onClick={() => onDelete(meeting)}>Usuń</button>
+                        <button type="button" onClick={() => onDelete(meeting)}>Usuń</button>
                     </td>
 
                     <td>
-                        <button type="button"
-                                onClick={() => onSignIn(meeting)}>Zapisz się</button>
+                        <button type="button" onClick={() => onSignIn(meeting)}>Zapisz się</button>
                     </td>
 
                     <td>
-                        <button type="button"
-                                onClick={() => onSignout(meeting)}>Wypisz się</button>
+                        <button type="button" onClick={() => onSignout(meeting)}>Wypisz się</button>
+                    </td>
+
+                    <td>
+                      <button onClick={() => setEditing(meeting)}>Edytuj</button>
                     </td>
 
                 </tr>)

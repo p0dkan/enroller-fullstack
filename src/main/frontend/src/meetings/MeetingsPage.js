@@ -1,10 +1,12 @@
 import {useEffect, useState} from "react";
 import NewMeetingForm from "./NewMeetingForm";
 import MeetingsList from "./MeetingsList";
+import EditMeetingForm from "./EditMeetingForm";
 
 export default function MeetingsPage({username}) {
     const [meetings, setMeetings] = useState([]);
     const [addingNewMeeting, setAddingNewMeeting] = useState(false);
+    const [editingMeeting, setEditingMeeting] = useState(null);
 
     const fetchMeetings = async () => {
         const response = await fetch(`/api/meetings`);
@@ -50,6 +52,18 @@ export default function MeetingsPage({username}) {
         }
     }
 
+    async function handleUpdateMeeting(updatedMeeting) {
+        const response = await fetch(`/api/meetings/${updatedMeeting.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedMeeting)
+        });
+        if (response.ok) {
+            fetchMeetings();
+            setEditingMeeting(null);
+        }
+    }
+
 
 
     async function signInToMeeting(meeting){
@@ -78,15 +92,27 @@ export default function MeetingsPage({username}) {
         <div>
             <h2>Zajęcia ({meetings.length})</h2>
             {
-                addingNewMeeting
-                    ? <NewMeetingForm onSubmit={(meeting) => handleNewMeeting(meeting)}/>
-                    : <button onClick={() => setAddingNewMeeting(true)}>Dodaj nowe spotkanie</button>
+                editingMeeting ? (
+                    <EditMeetingForm
+                        meeting={editingMeeting}
+                        onUpdate={handleUpdateMeeting}
+                        onCancel={() => setEditingMeeting(null)}
+                    />
+                ) : (
+                    addingNewMeeting ? (
+                        <NewMeetingForm onSubmit={handleNewMeeting} />
+                    ) : (
+                        <button onClick={() => setAddingNewMeeting(true)}>Dodaj nowe spotkanie</button>
+                    )
+                )
             }
             {meetings.length > 0 &&
-                <MeetingsList meetings={meetings} username={username}
-                              onDelete={handleDeleteMeeting} onSignIn = {signInToMeeting} onSignout = {signOutMeeting}/>}
-
-
+                <MeetingsList meetings={meetings}
+                username={username}
+                onDelete={handleDeleteMeeting}
+                onSignIn = {signInToMeeting}
+                onSignout = {signOutMeeting}
+                setEditing={setEditingMeeting}/>}
         </div>
     )
 }
