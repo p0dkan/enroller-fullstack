@@ -12,10 +12,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "meeting")
@@ -31,8 +34,12 @@ public class Meeting {
     @Column
     private String description;
 
+//    @Column
+//    private String date;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @Column
-    private String date;
+    private LocalDateTime date;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "meeting_participant", joinColumns = {@JoinColumn(name = "meeting_id")}, inverseJoinColumns = {
@@ -51,9 +58,7 @@ public class Meeting {
         return description;
     }
 
-    public String getDate() {
-        return date;
-    }
+    public LocalDateTime getDate() {return date; }
 
     public void setId(long id) {
         this.id = id;
@@ -67,9 +72,7 @@ public class Meeting {
         this.description = description;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
+    public void setDate(LocalDateTime date) {this.date = date;}
 
     public void addParticipant(Participant participant) {
         this.participants.add(participant);

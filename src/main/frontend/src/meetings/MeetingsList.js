@@ -5,6 +5,7 @@ export default function MeetingsList({meetings,onDelete, onSignIn,onSignout}) {
             <tr>
                 <th>Nazwa spotkania</th>
                 <th>Opis</th>
+                <th>Data i godzina</th>
                 <th>Uczestnicy</th>
                 <th>Usuń spotkanie</th>
                 <th>Zapisz się</th>
@@ -13,9 +14,14 @@ export default function MeetingsList({meetings,onDelete, onSignIn,onSignout}) {
             </thead>
             <tbody>
             {
-                meetings.map((meeting, index) => <tr key={index}>
+                meetings.map((meeting, index) => {
+                    const dateObj = new Date(meeting.date);
+                    const formattedDate = dateObj.toLocaleString(); // np. "2.06.2025, 14:30:00"
+                    return (
+                    <tr key={index}>
                     <td>{meeting.title}</td>
                     <td>{meeting.description}</td>
+                    <td>{formattedDate}</td>
                     <td>
                           {meeting.participants.map(participant => (
                             <p key={participant.login} style={{ margin: 0 }}>{participant.login}</p>
@@ -37,7 +43,7 @@ export default function MeetingsList({meetings,onDelete, onSignIn,onSignout}) {
                     </td>
 
                 </tr>)
-            }
+            })}
             </tbody>
         </table>
     );
